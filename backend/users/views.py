@@ -4,7 +4,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from rest_framework import status
 
-from .serializers import UserRegistrationSerializer
+from .serializers import UserRegistrationSerializer, ProfileSerializer
 from .models import User
 
 class RegisterView(generics.CreateAPIView):
@@ -36,3 +36,13 @@ class LoginView(generics.GenericAPIView):
                 'user_id': user.id
             })
         return Response({'error': 'invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class ProfileView(generics.RetrieveUpdateAPIView):
+    """ 用户信息视图 """
+    queryset = User.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user

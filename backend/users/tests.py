@@ -28,23 +28,48 @@
 
 
 # users/tests/test_login.py
+# from django.test import TestCase
+# from django.urls import reverse
+# from rest_framework.test import APIClient
+# from django.contrib.auth import get_user_model
+#
+# class UserLoginTest(TestCase):
+#     def setUp(self):
+#         self.client = APIClient()
+#         self.user = get_user_model().objects.create_user(
+#             email='test@example.com',
+#             password='securepassword123'
+#         )
+#
+#     def test_login_success(self):
+#         url = reverse('users:login')
+#         data = {'email': 'test@example.com', 'password': 'securepassword123'}
+#         response = self.client.post(url, data, format='json')
+#         self.assertEqual(response.status_code, 200)
+#         self.assertIn('access', response.data)
+#         self.assertIn('refresh', response.data)
+
+
+
+# users/tests/test_profile.py
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from django.contrib.auth import get_user_model
 
-class UserLoginTest(TestCase):
+class ProfileTest(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
             email='test@example.com',
             password='securepassword123'
         )
+        self.client.force_authenticate(user=self.user)
 
-    def test_login_success(self):
-        url = reverse('users:login')
-        data = {'email': 'test@example.com', 'password': 'securepassword123'}
-        response = self.client.post(url, data, format='json')
+    def test_update_profile(self):
+        url = reverse('users:profile')
+        data = {'phone': '+0987654321', 'date_of_birth': '1985-05-15'}
+        response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, 200)
-        self.assertIn('access', response.data)
-        self.assertIn('refresh', response.data)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.phone, '+0987654321')

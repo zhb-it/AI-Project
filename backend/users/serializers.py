@@ -17,3 +17,18 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    """ 用户信息序列化器 """
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'phone', 'date_of_birth', 'avatar']
+
+    def update(self, instance, validated_data):
+        instance.email = validated_data.get('email', instance.email)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.date_of_birth = validated_data.get('date_of_birth', instance.date_of_birth)
+        instance.avatar = validated_data.get('avatar', instance.avatar)
+        instance.save()
+        return instance
